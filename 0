@@ -945,7 +945,15 @@ end
 local player = game.Players.LocalPlayer
 local leaderstats = player:WaitForChild("leaderstats")
 local strengthStat = leaderstats:WaitForChild("Strength")
-local durabilityStat = player:WaitForChild("Durability")
+
+local durabilityStat
+if player:FindFirstChild("Durability") then
+    durabilityStat = player:WaitForChild("Durability")
+elseif leaderstats:FindChild("Durability") then
+    durabilityStat = leaderstats:WaitForChild("Durability")
+else
+    return
+end
 
 Main:CreateText({
     Text = "Session Stats",
@@ -965,10 +973,7 @@ local stopwatchLabel = Main:CreateText({
     TextColor = Color3.fromRGB(193, 193, 193)
 })
 
-Main:CreateText({
-    Text = "",
-    TextSize = 10
-})
+Main:CreateText({ Text = "", TextSize = 10 })
 
 local projectedStrengthLabel = Main:CreateText({
     Text = "Strength Pace: 0 /Hour  0 /Day",
@@ -982,10 +987,7 @@ local projectedDurabilityLabel = Main:CreateText({
     TextColor = Color3.fromRGB(193, 193, 193)
 })
 
-Main:CreateText({
-    Text = "",
-    TextSize = 10
-})
+Main:CreateText({ Text = "", TextSize = 10 })
 
 local strengthLabel = Main:CreateText({
     Text = "Strength: 0   Gained: 0",
@@ -1009,8 +1011,8 @@ task.spawn(function()
     while true do
         local currentTime = tick()
         local elapsedTime = currentTime - startTime
-        local days = math.floor(elapsedTime / (24 * 3600))
-        local hours = math.floor((elapsedTime % (24 * 3600)) / 3600)
+        local days = math.floor(elapsedTime / 86400)
+        local hours = math.floor((elapsedTime % 86400) / 3600)
         local minutes = math.floor((elapsedTime % 3600) / 60)
         local seconds = math.floor(elapsedTime % 60)
 
@@ -1031,21 +1033,22 @@ task.spawn(function()
             local strengthPerSecond = sessionStrengthDelta / elapsedTime
             local durabilityPerSecond = sessionDurabilityDelta / elapsedTime
 
-            local secondsPerHour = 3600
-            local secondsPerDay = 86400
+            local strengthPerHour = math.floor(strengthPerSecond * 3600)
+            local durabilityPerHour = math.floor(durabilityPerSecond * 3600)
 
-            local strengthPerHour = math.floor(strengthPerSecond * secondsPerHour)
-            local durabilityPerHour = math.floor(durabilityPerSecond * secondsPerHour)
-
-            local projectedStrength = math.floor(strengthPerSecond * secondsPerDay)
-            local projectedDurability = math.floor(durabilityPerSecond * secondsPerDay)
+            local projectedStrength = math.floor(strengthPerSecond * 86400)
+            local projectedDurability = math.floor(durabilityPerSecond * 86400)
 
             projectedStrengthLabel.Text = "Strength Pace: " .. formatNumber(strengthPerHour) .. "/Hour     " .. formatNumber(projectedStrength) .. "/Day"
             projectedDurabilityLabel.Text = "Durability Pace: " .. formatNumber(durabilityPerHour) .. "/Hour     " .. formatNumber(projectedDurability) .. "/Day"
         end
+        
         task.wait(0.05)
     end
 end)
+
+strengthStat.Changed:Connect(function(value) end)
+durabilityStat.Changed:Connect(function(value) end)
 
 Main:CreateText({
     Text = "",
