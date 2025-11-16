@@ -1,4 +1,4 @@
-local Apoto = loadstring(game:HttpGet("https://raw.githubusercontent.com/TssAX/UU/refs/heads/main/II"))()
+local Apoto = loadstring(game:HttpGet("https://raw.githubusercontent.com/adamowaissi22-boop/Axom-Scripts-/refs/heads/main/Apoto%20Library%20Gui"))()
 
 local TabIcons = {
     ["Home"] = "rbxassetid://10734995860",
